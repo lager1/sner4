@@ -3,7 +3,7 @@
 import os
 
 import flask.cli
-from flask import flash, Flask, render_template
+from flask import Flask, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_jsglue import JSGlue
 from flask_login import LoginManager

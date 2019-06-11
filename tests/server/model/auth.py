@@ -14,7 +14,8 @@ def create_test_user():
     return User(
         username='user1',
         password=str(uuid4()),
-        active=True)
+        active=True,
+        roles=['user'])
 
 
 @pytest.fixture
