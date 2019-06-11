@@ -6,6 +6,7 @@ import flask.cli
 from flask import flash, Flask, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_jsglue import JSGlue
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import generate_csrf
 import yaml
@@ -28,6 +29,7 @@ DEFAULT_CONFIG = {
 
 db = SQLAlchemy()  # pylint: disable=invalid-name
 jsglue = JSGlue()  # pylint: disable=invalid-name
+login_manager = LoginManager()  # pylint: disable=invalid-name
 toolbar = DebugToolbarExtension()  # pylint: disable=invalid-name
 
 
@@ -68,6 +70,7 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
 
     db.init_app(app)
     jsglue.init_app(app)
+    login_manager.init_app(app)
     if app.config['DEBUG']:  # pragma: no cover
         toolbar.init_app(app)
 
@@ -75,6 +78,8 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
     app.register_blueprint(scheduler.blueprint, url_prefix='/scheduler')
     from sner.server.controller import storage
     app.register_blueprint(storage.blueprint, url_prefix='/storage')
+    from sner.server.controller import auth
+    app.register_blueprint(auth.blueprint, url_prefix='/auth')
 
     from sner.server.command.db import db_command
     app.cli.add_command(db_command)
@@ -104,12 +109,14 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
 
     @app.shell_context_processor
     def make_shell_context():  # pylint: disable=unused-variable
+        from sner.server.model.auth import User
         from sner.server.model.scheduler import Excl, ExclFamily, Job, Queue, Target, Task
         from sner.server.model.storage import Host, Note, Service, Vuln
         return {
             'app': app, 'db': db,
             'Excl': Excl, 'ExclFamily': ExclFamily, 'Job': Job, 'Queue': Queue, 'Target': Target, 'Task': Task,
-            'Host': Host, 'Note': Note, 'Service': Service, 'Vuln': Vuln}
+            'Host': Host, 'Note': Note, 'Service': Service, 'Vuln': Vuln,
+            'User': User}
 
     return app
 
