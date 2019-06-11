@@ -13,9 +13,8 @@ class User(db.Model, flask_login.UserMixin):
     password = db.Column(db.String(256))
     email = db.Column(db.String(256))
     active = db.Column(db.Boolean)
+    roles = db.Column(postgresql.ARRAY(db.String, dimensions=1))
 
     @property
     def is_active(self):
         return self.active
-
-# TODO: there's is_authenticated return True in mixin, why ?
