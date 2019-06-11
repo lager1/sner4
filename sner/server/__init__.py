@@ -90,10 +90,6 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
 
     @app.route('/')
     def index_route():  # pylint: disable=unused-variable
-        flash('info', 'info')
-        flash('success', 'success')
-        flash('warning', 'warning')
-        flash('error', 'error')
         return render_template('index.html')
 
     @app.template_filter('datetime')
