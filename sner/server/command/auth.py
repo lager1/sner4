@@ -8,6 +8,7 @@ from flask import current_app
 from flask.cli import with_appcontext
 
 from sner.server import db
+from sner.server.password_supervisor import PasswordSupervisor
 from sner.server.model.auth import User
 
 
@@ -27,7 +28,7 @@ def passwordreset(username):
         current_app.logger.error('no such queue')
         sys.exit(1)
 
-    tmp_password = str(uuid4())
+    tmp_password = PasswordSupervisor().generate()
     user.password = tmp_password
     db.session.commit()
-    current_app.logger.info('%s:%s' % (user.username, tmp_password))
+    current_app.logger.info('password reset "%s:%s"' % (user.username, tmp_password))
