@@ -1,13 +1,14 @@
 """controller auth.user"""
 
 from datatables import ColumnDT, DataTables
-from flask import jsonify, redirect, render_template, request, url_for
+from flask import flash, jsonify, redirect, render_template, request, url_for
+from flask_login import current_user
 from sqlalchemy_filters import apply_filters
 
 from sner.server import db
 from sner.server.controller.auth import role_required, blueprint
 from sner.server.form import ButtonForm
-from sner.server.form.auth import UserForm
+from sner.server.form.auth import UserForm, UserChangePasswordForm
 from sner.server.model.auth import User
 from sner.server.sqlafilter import filter_parser
 
@@ -88,3 +89,19 @@ def user_delete_route(user_id):
         return redirect(url_for('auth.user_list_route'))
 
     return render_template('button-delete.html', form=form, form_url=url_for('auth.user_delete_route', user_id=user_id))
+
+
+@blueprint.route('/user/changepassword', methods=['GET', 'POST'])
+@role_required('user')
+def user_changepassword_route():
+    """change password for self"""
+
+    form = UserChangePasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter(User.id == current_user.id).one()
+        user.password = form.password1.data
+        db.session.commit()
+        flash('Password changed.', 'info')
+        return redirect(url_for('auth.user_changepassword_route'))
+
+    return render_template('auth/user/changepassword.html', form=form, form_url=url_for('auth.user_changepassword_route'))

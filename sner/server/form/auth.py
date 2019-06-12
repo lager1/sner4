@@ -1,6 +1,7 @@
 """auth forms"""
 
 from flask import current_app
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, SelectMultipleField, StringField, ValidationError, validators, widgets
 
@@ -11,9 +12,17 @@ def strong_password(form, field):
     """validate password field"""
 
     if field.data:
-        pwsr = PasswordSupervisor().check_strength(field.data, form.username.data)
+        username = form.username.data if hasattr(form, 'username') else current_user.username
+        pwsr = PasswordSupervisor().check_strength(field.data, username)
         if not pwsr.is_strong:
             raise ValidationError(pwsr.message)
+
+
+def passwords_match(form, field):  # pylint: disable=unused-argument
+    """match passwords for change password"""
+
+    if form.password1.data != form.password2.data:
+        raise ValidationError('Passwords does not match.')
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -46,3 +55,10 @@ class UserForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.roles.choices = [(x, x) for x in current_app.config['SNER_AUTH_ROLES']]
+
+
+class UserChangePasswordForm(FlaskForm):
+    """user change password form"""
+
+    password1 = PasswordField(label='Password', validators=[passwords_match, strong_password])
+    password2 = PasswordField(label='Repeat password', validators=[passwords_match, strong_password])
