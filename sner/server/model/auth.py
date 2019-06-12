@@ -1,6 +1,6 @@
 """auth component models"""
 
-from crypt import crypt, mksalt, METHOD_SHA512
+from crypt import crypt, mksalt, METHOD_SHA512  # pylint: disable=no-name-in-module
 
 import flask_login
 from sqlalchemy.dialects import postgresql
@@ -13,7 +13,7 @@ class User(db.Model, flask_login.UserMixin):
     """user model"""
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(256), unique=True)
+    username = db.Column(db.String(256), unique=True, nullable=False)
     _password = db.Column('password', db.String(256))
     email = db.Column(db.String(256))
     active = db.Column(db.Boolean)
@@ -21,6 +21,8 @@ class User(db.Model, flask_login.UserMixin):
 
     @property
     def is_active(self):
+        """user active getter"""
+
         return self.active
 
     def has_role(self, role):
@@ -32,17 +34,25 @@ class User(db.Model, flask_login.UserMixin):
 
     @hybrid_property
     def password(self):
-        return self._password;
+        """password getter"""
+
+        return self._password
 
     @password.setter
     def password(self, value):
+        """password setter"""
+
         self._password = crypt(value, mksalt(METHOD_SHA512))
 
     def force_password(self, value):
+        """password setter"""
+
         self._password = value
 
     @property
     def password_salt(self):
+        """demerges salt from password"""
+
         if self._password:
             return self._password[:self.password.rfind('$')]
         return None

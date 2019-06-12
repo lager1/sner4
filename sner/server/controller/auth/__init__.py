@@ -30,9 +30,9 @@ def login_route():
         user = User.query.filter(User.username == form.username.data).one_or_none()
         if user and user.password_salt and compare_digest(crypt(form.password.data, user.password_salt), user.password):
             login_user(user)
-            return redirect(url_for('auth.login_test_route'))
+            return redirect(url_for('index_route'))
 
-        flash('Bad credentials', 'error')
+        flash('Invalid credentials', 'error')
 
     return render_template('auth/login.html', form=form, form_url=url_for('auth.login_route'))
 

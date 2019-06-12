@@ -19,6 +19,13 @@ def test_login(client, test_user):
 
     form = client.get(url_for('auth.login_route')).form
     form['username'] = test_user.username
+    form['password'] = 'invalid'
+    response = form.submit()
+    assert response.status_code == HTTPStatus.OK
+    assert response.lxml.xpath('//script[contains(text(), "toastr[\'error\'](\'Invalid credentials\');")]')
+
+    form = client.get(url_for('auth.login_route')).form
+    form['username'] = test_user.username
     form['password'] = tmp_password
     response = form.submit()
     assert response.status_code == HTTPStatus.FOUND

@@ -5,6 +5,7 @@ from flask import jsonify, redirect, render_template, request, url_for
 from sqlalchemy_filters import apply_filters
 
 from sner.server import db
+from sner.server.controller.auth import role_required
 from sner.server.controller.scheduler import blueprint
 from sner.server.form import ButtonForm
 from sner.server.form.scheduler import TaskForm
@@ -13,6 +14,7 @@ from sner.server.sqlafilter import filter_parser
 
 
 @blueprint.route('/task/list')
+@role_required('user')
 def task_list_route():
     """list tasks"""
 

@@ -49,7 +49,8 @@ def db_initdata():
     # auth test data
     db.session.add(User(
         username='user1',
-        active=True))
+        active=True,
+        roles=['user']))
 
     # scheduler test data
     db.session.add(Excl(

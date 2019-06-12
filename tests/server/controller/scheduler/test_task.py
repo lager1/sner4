@@ -9,10 +9,10 @@ from sner.server.model.scheduler import Task
 from tests.server.model.scheduler import create_test_task
 
 
-def test_task_list_route(client):
+def test_task_list_route(cl_user):
     """task list route test"""
 
-    response = client.get(url_for('scheduler.task_list_route'))
+    response = cl_user.get(url_for('scheduler.task_list_route'))
     assert response.status_code == HTTPStatus.OK
     assert '<h1>Tasks list' in response
 

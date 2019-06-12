@@ -81,6 +81,8 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
     from sner.server.controller import auth
     app.register_blueprint(auth.blueprint, url_prefix='/auth')
 
+    from sner.server.command.auth import auth_command
+    app.cli.add_command(auth_command)
     from sner.server.command.db import db_command
     app.cli.add_command(db_command)
     from sner.server.command.scheduler import scheduler_command
