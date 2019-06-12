@@ -1,7 +1,6 @@
 """auth commands"""
 
 import sys
-from uuid import uuid4
 
 import click
 from flask import current_app

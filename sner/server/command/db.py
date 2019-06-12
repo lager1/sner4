@@ -50,7 +50,7 @@ def db_initdata():
     db.session.add(User(
         username='user1',
         active=True,
-        roles=['user']))
+        roles=['user', 'admin']))
 
     # scheduler test data
     db.session.add(Excl(

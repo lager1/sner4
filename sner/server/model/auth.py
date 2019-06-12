@@ -42,12 +42,8 @@ class User(db.Model, flask_login.UserMixin):
     def password(self, value):
         """password setter"""
 
-        self._password = crypt(value, mksalt(METHOD_SHA512))
-
-    def force_password(self, value):
-        """password setter"""
-
-        self._password = value
+        if value:
+            self._password = crypt(value, mksalt(METHOD_SHA512))
 
     @property
     def password_salt(self):

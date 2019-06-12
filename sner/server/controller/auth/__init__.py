@@ -13,6 +13,8 @@ from sner.server.model.auth import User
 
 blueprint = Blueprint('auth', __name__)  # pylint: disable=invalid-name
 
+import sner.server.controller.auth.user  # noqa: E402,F401  pylint: disable=wrong-import-position
+
 
 @login_manager.user_loader
 def user_loader(user_id):

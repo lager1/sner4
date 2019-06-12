@@ -24,7 +24,8 @@ DEFAULT_CONFIG = {
     'SQLALCHEMY_DATABASE_URI': 'postgresql:///sner',
     'SQLALCHEMY_ECHO': False,
 
-    'SNER_VAR': '/var/sner'
+    'SNER_VAR': '/var/sner',
+    'SNER_AUTH_ROLES': ['user', 'admin']
 }
 
 db = SQLAlchemy()  # pylint: disable=invalid-name
