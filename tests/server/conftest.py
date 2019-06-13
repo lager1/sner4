@@ -42,13 +42,6 @@ def client_in_roles(client, roles):
 
 
 @pytest.fixture
-def cl_user(client):  # pylint: disable=redefined-outer-name
-    """yield client authenticated to role user"""
-
-    yield client_in_roles(client, ['user'])
-
-
-@pytest.fixture
 def cl_operator(client):  # pylint: disable=redefined-outer-name
     """yield client authenticated to role operator"""
 
