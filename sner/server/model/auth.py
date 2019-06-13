@@ -50,9 +50,7 @@ class User(db.Model, flask_login.UserMixin):
     def password_salt(self):
         """demerges salt from password"""
 
-        if self._password:
-            return self._password[:self.password.rfind('$')]
-        return None
+        return self._password[:self.password.rfind('$')] if self._password else None
 
     def compare_password(self, password):
         """compare user password"""

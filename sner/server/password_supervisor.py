@@ -65,7 +65,7 @@ class PasswordSupervisor():
         """generates password compliant with the policy"""
 
         if length < self.min_length:
-            raise RuntimeError('Requested less than configured minimum password length')
+            raise RuntimeError('Requested less than configured minimum password length.')
 
         alphabet = ''.join([chr(x) for x in range(32, 126)])
         ret = ''
@@ -94,3 +94,11 @@ def test_all():
     assert 'based on username' in pwsr.message
 
     assert pws.check_strength(pws.generate(), 'username').is_strong
+
+    catched_without_pytest = False
+    try:
+        pws.generate(pws.min_length-1)
+    except RuntimeError as e:
+        assert str(e) == 'Requested less than configured minimum password length.'
+        catched_without_pytest = True
+    assert catched_without_pytest

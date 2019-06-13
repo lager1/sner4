@@ -88,6 +88,20 @@ def test_user_changepassword_route(cl_user):
     tmp_password = PasswordSupervisor().generate()
 
     form = cl_user.get(url_for('auth.user_changepassword_route')).form
+    form['password1'] = '1'
+    form['password2'] = '2'
+    response = form.submit()
+    assert response.status_code == HTTPStatus.OK
+    assert response.lxml.xpath('//*[@class="text-danger" and text()="Passwords does not match."]')
+
+    form = cl_user.get(url_for('auth.user_changepassword_route')).form
+    form['password1'] = 'weak'
+    form['password2'] = 'weak'
+    response = form.submit()
+    assert response.status_code == HTTPStatus.OK
+    assert response.lxml.xpath('//*[@class="text-danger" and contains(text(), "Password too short.")]')
+
+    form = cl_user.get(url_for('auth.user_changepassword_route')).form
     form['password1'] = tmp_password
     form['password2'] = tmp_password
     response = form.submit()

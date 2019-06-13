@@ -30,10 +30,29 @@ def test_login(client, test_user):
     response = form.submit()
     assert response.status_code == HTTPStatus.FOUND
 
-    response = client.get(url_for('auth.login_test_route'))
-    assert 'Logged in as: %s' % test_user.username in response.body.decode('utf-8')
+    response = client.get(url_for('index_route'))
+    assert response.lxml.xpath('//a[text()="Logout"]')
 
 
-def test_logout(client, test_user):
+def test_logout(cl_user):
     """test logout"""
-    raise RuntimeError('not implemented')
+
+    response = cl_user.get(url_for('auth.logout_route'))
+    assert response.status_code == HTTPStatus.FOUND
+    response = response.follow()
+    assert response.lxml.xpath('//a[text()="Login"]')
+
+
+def test_unauthorized(client):
+    """test for not logged in"""
+
+    response = client.get(url_for('auth.user_changepassword_route'))
+    assert response.status_code == HTTPStatus.FOUND
+    assert '/auth/login' in response.headers['Location']
+
+
+def test_forbidden(cl_user):
+    """access forbidden"""
+
+    response = cl_user.get(url_for('auth.user_list_route'), status='*')
+    assert response.status_code == HTTPStatus.FORBIDDEN
