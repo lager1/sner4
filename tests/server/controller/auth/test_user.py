@@ -4,7 +4,6 @@ import json
 from http import HTTPStatus
 
 from flask import url_for
-from flask_login import current_user
 
 from sner.server.model.auth import User
 from sner.server.password_supervisor import PasswordSupervisor
