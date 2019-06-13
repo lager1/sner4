@@ -29,7 +29,7 @@ def login_route():
 
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter(User.username == form.username.data).one_or_none()
+        user = User.query.filter(User.active, User.username == form.username.data).one_or_none()
         if user and user.password_salt and compare_digest(crypt(form.password.data, user.password_salt), user.password):
             login_user(user)
             return redirect(url_for('index_route'))
@@ -58,7 +58,7 @@ def login_test_route():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    """unauthorized handler"""
+    """unauthorized handler; not logged in"""
 
-    flash('Unauthorized', 'error')
-    return redirect(url_for('index_route'))
+    flash('Not logged in', 'warning')
+    return redirect(url_for('auth.login_route'))

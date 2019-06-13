@@ -266,8 +266,11 @@
 						<span class="glyphicon glyphicon-chevron-down"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="{{ url_for('auth.user_changepassword_route') }}">Change password</a></li>
+					{% if current_user.has_role('admin') %}
 						<li><a href="{{ url_for('auth.user_list_route') }}">Users</a></li>
+						<li role="separator" class="divider"></li>
+					{% endif %}
+						<li><a href="{{ url_for('auth.user_changepassword_route') }}">Change password</a></li>
 						<li><a href="{{ url_for('auth.logout_route') }}">Logout</a></li>
 					</ul>
 				</li>
