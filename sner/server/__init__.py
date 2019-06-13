@@ -48,7 +48,7 @@ def get_dotted(data, path):
 def config_from_yaml(filename):
     """pull config variables from config file"""
 
-    if filename:
+    if filename and os.path.exists(filename):
         with open(filename, 'r') as ftmp:
             config_dict = yaml.safe_load(ftmp.read())
         config = {
