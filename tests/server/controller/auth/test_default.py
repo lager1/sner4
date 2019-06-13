@@ -32,3 +32,8 @@ def test_login(client, test_user):
 
     response = client.get(url_for('auth.login_test_route'))
     assert 'Logged in as: %s' % test_user.username in response.body.decode('utf-8')
+
+
+def test_logout(client, test_user):
+    """test logout"""
+    raise RuntimeError('not implemented')

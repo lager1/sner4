@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from sner.server import db
 from sner.server.model.auth import User
 from tests.selenium import WEBDRIVER_WAIT
+from tests.server.model.auth import test_user  # noqa: F401  pylint: disable=unused-import
 from tests.server.model.scheduler import test_excl_network, test_job, test_queue, test_target, test_task  # noqa: F401  pylint: disable=unused-import
 from tests.server.model.storage import test_host, test_note, test_service, test_vuln  # noqa: F401  pylint: disable=unused-import
 
@@ -45,3 +46,10 @@ def sl_operator(selenium):  # pylint: disable=redefined-outer-name
     """yield client authenticated to role operator"""
 
     yield selenium_in_roles(selenium, ['user', 'operator'])
+
+
+@pytest.fixture
+def sl_admin(selenium):  # pylint: disable=redefined-outer-name
+    """yield client authenticated to role admin"""
+
+    yield selenium_in_roles(selenium, ['user', 'operator', 'admin'])

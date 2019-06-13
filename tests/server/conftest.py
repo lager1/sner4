@@ -26,7 +26,7 @@ def runner(app):  # pylint: disable=redefined-outer-name
     return app.test_cli_runner()
 
 
-def client_in_roles(client, roles):
+def client_in_roles(clnt, roles):
     """create user role and login client to role(s)"""
 
     tmp_password = str(uuid4())
@@ -34,11 +34,18 @@ def client_in_roles(client, roles):
     db.session.add(tmp_user)
     db.session.commit()
 
-    form = client.get(url_for('auth.login_route')).form
+    form = clnt.get(url_for('auth.login_route')).form
     form['username'] = tmp_user.username
     form['password'] = tmp_password
     form.submit()
-    return client
+    return clnt
+
+
+@pytest.fixture
+def cl_user(client):  # pylint: disable=redefined-outer-name
+    """yield client authenticated to role user"""
+
+    yield client_in_roles(client, ['user'])
 
 
 @pytest.fixture
@@ -46,3 +53,10 @@ def cl_operator(client):  # pylint: disable=redefined-outer-name
     """yield client authenticated to role operator"""
 
     yield client_in_roles(client, ['user', 'operator'])
+
+
+@pytest.fixture
+def cl_admin(client):  # pylint: disable=redefined-outer-name
+    """yield client authenticated to role admin"""
+
+    yield client_in_roles(client, ['user', 'operator', 'admin'])

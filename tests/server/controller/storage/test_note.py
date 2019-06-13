@@ -25,7 +25,9 @@ def test_note_list_json_route(cl_operator, test_note):
     response_data = json.loads(response.body.decode('utf-8'))
     assert response_data['data'][0]['data'] == test_note.data
 
-    response = cl_operator.post(url_for('storage.note_list_json_route', filter='Note.data=="%s"' % test_note.data), {'draw': 1, 'start': 0, 'length': 1})
+    response = cl_operator.post(
+        url_for('storage.note_list_json_route', filter='Note.data=="%s"' % test_note.data),
+        {'draw': 1, 'start': 0, 'length': 1})
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.body.decode('utf-8'))
     assert response_data['data'][0]['data'] == test_note.data

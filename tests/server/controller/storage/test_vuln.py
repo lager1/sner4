@@ -26,7 +26,9 @@ def test_vuln_list_json_route(cl_operator, test_vuln):
     response_data = json.loads(response.body.decode('utf-8'))
     assert test_vuln.name in response_data['data'][0]['name']
 
-    response = cl_operator.post(url_for('storage.vuln_list_json_route', filter='Vuln.name=="%s"' % test_vuln.name), {'draw': 1, 'start': 0, 'length': 1})
+    response = cl_operator.post(
+        url_for('storage.vuln_list_json_route', filter='Vuln.name=="%s"' % test_vuln.name),
+        {'draw': 1, 'start': 0, 'length': 1})
     assert response.status_code == HTTPStatus.OK
     response_data = json.loads(response.body.decode('utf-8'))
     assert test_vuln.name in response_data['data'][0]['name']
