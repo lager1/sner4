@@ -65,9 +65,10 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
     """flask application factory"""
 
     app = Flask('sner.server')
-    app.config.update(DEFAULT_CONFIG)
-    app.config.update(config_from_yaml(config_file))
-    app.config.update(config_from_yaml(os.environ.get(config_env)))
+    app.config.update(DEFAULT_CONFIG)  # default config
+    app.config.update(config_from_yaml(config_file))  # passed from other programs, eg. tests
+    app.config.update(config_from_yaml('sner.yaml'))  # easy configuration from cwd
+    app.config.update(config_from_yaml(os.environ.get(config_env)))  # wsgi config
 
     db.init_app(app)
     jsglue.init_app(app)
