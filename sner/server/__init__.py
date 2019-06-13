@@ -73,6 +73,9 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
     db.init_app(app)
     jsglue.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = 'auth.login_route'
+    login_manager.login_message = 'Not logged in'
+    login_manager.login_message_category = 'warning'
     if app.config['DEBUG']:  # pragma: no cover
         toolbar.init_app(app)
 

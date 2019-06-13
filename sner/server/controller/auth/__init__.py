@@ -1,6 +1,6 @@
 """authentication handling module"""
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, current_app, flash, redirect, request, render_template, url_for
 from flask_login import login_user, logout_user
 
 from sner.server import login_manager
@@ -28,11 +28,16 @@ def login_route():
         user = User.query.filter(User.active, User.username == form.username.data).one_or_none()
         if user and user.compare_password(form.password.data):
             login_user(user)
+
+            if request.args.get('next'):
+                for rule in current_app.url_map.iter_rules():
+                    if rule.rule.startswith(request.args.get('next')):
+                        return redirect(request.args.get('next'))
             return redirect(url_for('index_route'))
 
         flash('Invalid credentials', 'error')
 
-    return render_template('auth/login.html', form=form, form_url=url_for('auth.login_route'))
+    return render_template('auth/login.html', form=form, form_url=url_for('auth.login_route', **request.args))
 
 
 @blueprint.route('/logout')
@@ -42,11 +47,3 @@ def logout_route():
     logout_user()
     flash('Logged out', 'info')
     return redirect(url_for('index_route'))
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    """unauthorized handler; not logged in"""
-
-    flash('Not logged in', 'warning')
-    return redirect(url_for('auth.login_route'))
