@@ -1,6 +1,7 @@
 """auth component models"""
 
 from crypt import crypt, mksalt, METHOD_SHA512  # pylint: disable=no-name-in-module
+from hmac import compare_digest
 
 import flask_login
 from sqlalchemy.dialects import postgresql
@@ -52,3 +53,8 @@ class User(db.Model, flask_login.UserMixin):
         if self._password:
             return self._password[:self.password.rfind('$')]
         return None
+
+    def compare_password(self, password):
+        """compare user password"""
+
+        return compare_digest(crypt(password, self.password_salt), self.password) if self.password_salt else False

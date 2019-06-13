@@ -1,13 +1,9 @@
 """authentication handling module"""
 
-from crypt import crypt
-from hmac import compare_digest
-
 from flask import Blueprint, flash, redirect, render_template, url_for
-from flask_login import current_user, login_user, logout_user
+from flask_login import login_user, logout_user
 
 from sner.server import login_manager
-from sner.server.controller import role_required
 from sner.server.form.auth import LoginForm
 from sner.server.model.auth import User
 
@@ -30,7 +26,7 @@ def login_route():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter(User.active, User.username == form.username.data).one_or_none()
-        if user and user.password_salt and compare_digest(crypt(form.password.data, user.password_salt), user.password):
+        if user and user.compare_password(form.password.data):
             login_user(user)
             return redirect(url_for('index_route'))
 
@@ -46,14 +42,6 @@ def logout_route():
     logout_user()
     flash('Logged out', 'info')
     return redirect(url_for('index_route'))
-
-
-@blueprint.route('/login_test')
-@role_required('user')
-def login_test_route():
-    """test login route"""
-
-    return 'Logged in as: %s' % current_user.username
 
 
 @login_manager.unauthorized_handler
