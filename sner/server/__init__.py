@@ -79,12 +79,12 @@ def create_app(config_file=None, config_env='SNER_CONFIG'):
     if app.config['DEBUG']:  # pragma: no cover
         toolbar.init_app(app)
 
+    from sner.server.controller import auth
+    app.register_blueprint(auth.blueprint, url_prefix='/auth')
     from sner.server.controller import scheduler
     app.register_blueprint(scheduler.blueprint, url_prefix='/scheduler')
     from sner.server.controller import storage
     app.register_blueprint(storage.blueprint, url_prefix='/storage')
-    from sner.server.controller import auth
-    app.register_blueprint(auth.blueprint, url_prefix='/auth')
 
     from sner.server.command.auth import auth_command
     app.cli.add_command(auth_command)
