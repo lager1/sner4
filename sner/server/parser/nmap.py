@@ -8,7 +8,7 @@ import sys
 
 import libnmap.parser
 
-from sner.lib import is_zip, file_from_zip
+from sner.lib import format_host_address, file_from_zip, is_zip
 from sner.server import db
 from sner.server.parser import ParserBase, register_parser
 from sner.server.model.storage import Host, Note, Service
@@ -102,10 +102,29 @@ class NmapParser(ParserBase):
 
         return service
 
+    @staticmethod
+    def service_list(path):
+        """parse path and returns list of services in manymap target format"""
+
+        if is_zip(path):
+            data = file_from_zip(path, 'output.xml').decode('utf-8')
+        else:
+            with open(path, 'r') as ftmp:
+                data = ftmp.read()
+
+        services = []
+        report = libnmap.parser.NmapParser.parse_fromstring(data)
+        for ihost in report.hosts:
+            for iservice in ihost.services:
+                services.append('%s://%s:%d' % (iservice.protocol, format_host_address(ihost.address), iservice.port))
+
+        return services
+
 
 def debug_parser():  # pragma: no cover
     """cli helper, pull data from report and display"""
 
+    print('## default parser')
     with open(sys.argv[1], 'r') as ftmp:
         report = libnmap.parser.NmapParser.parse_fromstring(ftmp.read())
 
@@ -124,6 +143,9 @@ def debug_parser():  # pragma: no cover
             print(tmp.get_dict())
             print('#### service scripts_results')
             print(json.dumps(tmp.scripts_results, indent=2))
+
+    print('## service list parser')
+    print(NmapParser.service_list(sys.argv[1]))
 
 
 if __name__ == '__main__':  # pragma: no cover
